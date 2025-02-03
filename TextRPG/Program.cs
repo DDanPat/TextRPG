@@ -95,7 +95,7 @@
 
         public void StateUI()
         {
-            while(true)
+            while(game)
             {
                 Console.Clear();
                 Console.WriteLine("상태 보기");
@@ -123,7 +123,7 @@
         }
         public void InventoryUI()
         {
-            while (true)
+            while (game)
             {
                 Console.Clear();
                 Console.WriteLine("인벤토리");
@@ -149,7 +149,7 @@
 
         public void ItemManagerUI()
         {
-            while(true)
+            while(game)
             {
                 Console.Clear();
                 Console.WriteLine("인벤토리 - 장착 관리");
@@ -175,7 +175,7 @@
 
         public void ShopUI()
         {
-            while (true)
+            while (game)
             {
                 Console.Clear();
                 Console.WriteLine("상점 - 아이템 판매");
