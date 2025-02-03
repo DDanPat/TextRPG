@@ -5,7 +5,7 @@
 
     public interface ICharacter
     {
-        string Name { get; }
+        string Name { get; set; }
         string ClassName { get; }
         int Health { get; set; }
         int Attack { get; }
@@ -17,8 +17,7 @@
     public class Player : ICharacter
     {
         public string Name { get; set; }
-
-        public string ClassName { get; }
+        public string ClassName { get; set; }
         public int Health { get; set; }
         public int AttackPower { get; set; }
         public int Defence { get; set; }
@@ -27,6 +26,24 @@
 
         public int Level = 1;
         public int Gold = 1500;
+
+        public void ClassSelect(string Select)
+        {
+            if (Select == "1" || Select == "전사")
+            {
+                ClassName = "전사";
+                Health = 120;
+                AttackPower = 20;
+                Defence = 10;
+            }
+            else if (Select == "2" || Select == "도적")
+            {
+                ClassName = "도적";
+                Health = 100;
+                AttackPower = 30;
+                Defence = 5;
+            }
+        }
 
         public void TakeDamage(int damage)
         {
@@ -37,10 +54,10 @@
     }
 
 
-
     public class MainStage : Player
     {
         bool game = true;
+
         public void Start()
         {
             Console.WriteLine("무한의 던전에 오신 여러분 환영합니다.");
@@ -51,6 +68,14 @@
             //저장 시스템 만들기
 
             //직업 선택창 만들기
+            Console.Clear();
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 직업을 골라주세요.");
+            Console.WriteLine("1. 전사 ");
+            Console.WriteLine("2. 도적 ");
+            Console.Write(">> ");
+            string select = Console.ReadLine();
+            this.ClassSelect(select);
 
             MenuUI();
         }
@@ -109,6 +134,7 @@
                 Console.WriteLine("\n0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
+
 
                 string input = Console.ReadLine();
                 if (input == "0") MenuUI();
