@@ -52,38 +52,42 @@
 
             //직업 선택창 만들기
 
-            Menu();
+            MenuUI();
         }
-        public void Menu()
+        public void MenuUI()
         {
-            Console.Clear();
-            Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
-            Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
-            Console.WriteLine("1. 상태 보기");
-            Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 상점\n");
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
-            string choice = Console.ReadLine();
-
-            switch (choice)
+            while (true)
             {
-                case "1":
-                    State();
-                    break;
-                case "2":
-                    Inventory();
-                    break;
-                case "3":
-                    Shop();
-                    return;
-                default:
-                    Console.WriteLine("잘못된 입력입니다.");
-                    break;
+                Console.Clear();
+                Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
+                Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
+                Console.WriteLine("1. 상태 보기");
+                Console.WriteLine("2. 인벤토리");
+                Console.WriteLine("3. 상점\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        StateUI();
+                        break;
+                    case "2":
+                        InventoryUI();
+                        break;
+                    case "3":
+                        ShopUI();
+                        break;
+                    default:
+                        Console.WriteLine("잘못된 입력입니다.");
+                        break;
+                }
             }
+            
         }
 
-        public void State()
+        public void StateUI()
         {
             Console.Clear();
             Console.WriteLine("상태 보기");
@@ -99,25 +103,44 @@
             Console.Write(">> ");
 
             string input = Console.ReadLine();
-            if (input == "0") Menu();
+            if (input == "0") MenuUI();
 
         }
-        public void Inventory()
+        public void InventoryUI()
         {
             Console.Clear();
-            Console.WriteLine("인벤토리 - 장착 관리");
+            Console.WriteLine("인벤토리");
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
-            Console.WriteLine("[아이템 목록]");
+            Console.WriteLine("[아이템 목록]\n");
 
-            Console.WriteLine("\n0. 나가기\n");
+            Console.WriteLine("1. 장착 관리");
+            Console.WriteLine("0. 나가기\n");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
             Console.Write(">> ");
 
             string input = Console.ReadLine();
-            if (input == "0") Menu();
+            if (input =="1") ItemManagerUI();
+            else if (input == "0") MenuUI();
         }
 
-        public void Shop()
+        public void ItemManagerUI()
+        {
+            Console.Clear();
+            Console.WriteLine("인벤토리 - 장착 관리");
+            Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+            Console.WriteLine("[아이템 목록]\n");
+
+            
+            Console.WriteLine("0. 나가기\n");
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+            Console.Write(">> ");
+
+            string input = Console.ReadLine();
+            
+            if (input == "0") InventoryUI();
+        }
+
+        public void ShopUI()
         {
             Console.Clear();
             Console.WriteLine("상점 - 아이템 판매");
@@ -131,7 +154,7 @@
             Console.Write(">> ");
 
             string input = Console.ReadLine();
-            if (input == "0") Menu();
+            if (input == "0") MenuUI();
         }
         // 메인 메서드
 
