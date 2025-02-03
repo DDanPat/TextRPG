@@ -5,7 +5,7 @@
 
     public interface ICharacter
     {
-        string Name { get; }
+        string Name { get; set; }
         string ClassName { get; }
         int Health { get; set; }
         int Attack { get; }
@@ -17,8 +17,7 @@
     public class Player : ICharacter
     {
         public string Name { get; set; }
-
-        public string ClassName { get; }
+        public string ClassName { get; set; }
         public int Health { get; set; }
         public int AttackPower { get; set; }
         public int Defence { get; set; }
@@ -27,6 +26,24 @@
 
         public int Level = 1;
         public int Gold = 1500;
+
+        public void ClassSelect(string Select)
+        {
+            if (Select == "1" || Select == "전사")
+            {
+                ClassName = "전사";
+                Health = 120;
+                AttackPower = 20;
+                Defence = 10;
+            }
+            else if (Select == "2" || Select == "도적")
+            {
+                ClassName = "도적";
+                Health = 100;
+                AttackPower = 30;
+                Defence = 5;
+            }
+        }
 
         public void TakeDamage(int damage)
         {
@@ -37,20 +54,26 @@
     }
 
 
-
     public class MainStage : Player
     {
-        Player player = new Player();
         public void Start()
         {
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
             Console.WriteLine("원하시는 이름을 설정 해주세요.");
             Console.Write("이름 : ");
-            player.Name = Console.ReadLine();
+            this.Name = Console.ReadLine();
 
             //저장 시스템 만들기
 
             //직업 선택창 만들기
+            Console.Clear();
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 직업을 골라주세요.");
+            Console.WriteLine("1. 전사 ");
+            Console.WriteLine("2. 도적 ");
+            Console.Write(">> ");
+            string select = Console.ReadLine();
+            this.ClassSelect(select);
 
             Menu();
         }
@@ -88,12 +111,12 @@
             Console.Clear();
             Console.WriteLine("상태 보기");
             Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
-            Console.WriteLine($"Lv. {player.Level}");
-            Console.WriteLine($"{player.Name} ( {player.ClassName} )");
-            Console.WriteLine($"공격력 : {player.AttackPower}");
-            Console.WriteLine($"방어력 : {player.Defence}");
-            Console.WriteLine($"체 력 : {player.Health}");
-            Console.WriteLine($"Gold : {player.Gold} G");
+            Console.WriteLine($"Lv. {this.Level}");
+            Console.WriteLine($"{this.Name} ( {this.ClassName} )");
+            Console.WriteLine($"공격력 : {this.AttackPower}");
+            Console.WriteLine($"방어력 : {this.Defence}");
+            Console.WriteLine($"체 력 : {this.Health}");
+            Console.WriteLine($"Gold : {this.Gold} G");
             Console.WriteLine("\n0. 나가기\n");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
             Console.Write(">> ");
