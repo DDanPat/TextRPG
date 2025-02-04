@@ -337,7 +337,7 @@
                         break;
                     case "4":
                         //던전 입장
-                        Dungeon();
+                        DungeonUI();
                         break;
                     case "5":
                         // 휴식 하기
@@ -444,7 +444,7 @@
             }
 
         }
-        public void Dungeon()
+        public void DungeonUI()
         {
             while (game)
             {
