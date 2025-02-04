@@ -125,9 +125,44 @@
                     }
                     else //장비 장착
                     {
+                        if (ItemList[select - 1].ItemType == "공격력")// 선택한 아이템이 공격력이면
+                        {
+                            //공격력 아이템은 모두 false로 변경
+                            for (int i = 0; i < ItemList.Count; i++)
+                            {
+                                if (ItemList[i].ItemType == "공격력" && ItemList[i].IsEquip == true)
+                                {
+                                    ItemList[i].IsEquip = false;
+                                    player.EquipAttack -= ItemList[i].State;
+                                }
+                            }
+                            ItemList[select - 1].IsEquip = true;
+                            player.EquipAttack += ItemList[select - 1].State;
+                        }
+                        else if (ItemList[select - 1].ItemType == "방어력")// 선택한 아이템이 공격력이면
+                        {
+                            //공격력 아이템은 모두 false로 변경
+                            for (int i = 0; i < ItemList.Count; i++)
+                            {
+                                if (ItemList[i].ItemType == "방어력" && ItemList[i].IsEquip == true)
+                                {
+                                    ItemList[i].IsEquip = false;
+                                    player.EquipDefense -= ItemList[i].State;
+                                }
+                                    
+                            }
+                            ItemList[select - 1].IsEquip = true;
+                            player.EquipDefense += ItemList[select - 1].State;
+                        }
+
+
+
+                        /*
                         ItemList[select - 1].IsEquip = true;
                         if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack += ItemList[select - 1].State;
                         else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense += ItemList[select - 1].State;
+                        */
+
                     }
                 }
                 else 
