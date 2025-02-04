@@ -12,7 +12,7 @@
         string ClassName { get; }
         int Health { get; set; }
         int Attack { get; }
-        int Defence { get; set; }
+        int Defense { get; set; }
         bool IsDead { get; }
         void TakeDamage(int damage);
     }
@@ -23,12 +23,15 @@
         public string ClassName { get; set; }
         public int Health { get; set; }
         public int AttackPower { get; set; }
-        public int Defence { get; set; }
+        public int Defense { get; set; }
         public bool IsDead => Health <= 0;
         public int Attack => new Random().Next(10, AttackPower); // 공격력은 랜덤
 
         public int Level = 1;
         public int Gold = 1500;
+
+        public int EquipAttack = 0;
+        public int EquipDefense = 0;
 
         public Player(string name, string Select)
         {
@@ -39,14 +42,14 @@
                 ClassName = "전사";
                 Health = 120;
                 AttackPower = 20;
-                Defence = 10;
+                Defense = 10;
             }
             else if (Select == "2" || Select == "도적")
             {
                 ClassName = "도적";
                 Health = 100;
                 AttackPower = 30;
-                Defence = 5;
+                Defense = 5;
             }
         }
 
@@ -87,7 +90,7 @@
                 Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
             }
         }
-        public void ItemEquipManger()
+        public void ItemEquipManger(Player player)
         {
             bool game = true;
             while (game)
@@ -113,8 +116,18 @@
                 if (select == 0) game = false;
                 else if (select > 0 && ItemList[select - 1] != null)
                 {
-                    if (ItemList[select - 1].IsEquip == true) ItemList[select - 1].IsEquip = false;
-                    else ItemList[select - 1].IsEquip = true;
+                    if (ItemList[select - 1].IsEquip == true)//장비 해제
+                    {
+                        ItemList[select - 1].IsEquip = false;
+                        if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack -= ItemList[select - 1].State;
+                        else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense -= ItemList[select - 1].State;
+                    }
+                    else //장비 장착
+                    {
+                        ItemList[select - 1].IsEquip = true;
+                        if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack += ItemList[select - 1].State;
+                        else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense += ItemList[select - 1].State;
+                    }
                 }
                 else 
                 {
@@ -150,7 +163,7 @@
         Inventory inventory = new Inventory();
         public void Start()
         {
-            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", true);
+            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", false);
             Items items2 = new Items("초보자 천갑옷", "방어력", 5, "초보자에게 처음 지급되는 천갑옷", false);
             inventory.AddItems(items1);
             inventory.AddItems(items2);
@@ -201,8 +214,12 @@
                 Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
                 Console.WriteLine($"Lv. {player.Level}");
                 Console.WriteLine($"{player.Name} ( {player.ClassName} )");
-                Console.WriteLine($"공격력 : {player.AttackPower}");
-                Console.WriteLine($"방어력 : {player.Defence}");
+                Console.Write($"공격력 : {player.AttackPower}"); Console.WriteLine($"({player.EquipAttack})");
+                //if (player.EquipAttack > 0) Console.WriteLine($"({player.EquipAttack})");
+                //else Console.WriteLine("");
+                Console.Write($"방어력 : {player.Defense}"); Console.WriteLine($"({player.EquipDefense})");
+                //if (player.EquipDefense > 0) Console.WriteLine($"({player.EquipDefense})");
+                //else Console.WriteLine("");
                 Console.WriteLine($"체 력 : {player.Health}");
                 Console.WriteLine($"Gold : {player.Gold} G");
                 Console.WriteLine("\n0. 나가기\n");
@@ -250,7 +267,7 @@
         }
         public void ItemManagerUI()
         {
-            inventory.ItemEquipManger();
+            inventory.ItemEquipManger(player);
         }
 
         public void ShopUI()
