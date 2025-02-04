@@ -1,16 +1,17 @@
 ﻿namespace TextRPG
 {
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using System.Xml.Linq;
 
     public interface ICharacter
     {
         string Name { get; set; }
-        string ClassName { get; }
         int Health { get; set; }
         int Attack { get; }
         int Defense { get; set; }
@@ -56,12 +57,158 @@
 
         public void TakeDamage(int damage)
         {
+            float playerDef = Defense + EquipDefense;
+            float takeDamage = (damage / playerDef) * 100;
             Health -= damage;
             if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
             else Console.WriteLine($"{Name}이(가) {damage}의 데미지를 받았습니다. 남은 체력: {Health}");
         }
-
     }
+
+    public class Monster : ICharacter
+    {
+        public string Name { get; set; }
+        public int Health { get; set; }
+        public int Attack { get; set; }
+        public int Defense { get; set; }
+        public bool IsDead => Health <= 0;
+
+        public int Level {  get; set; }
+        public int Gold { get; set; }
+
+        public Monster(string name, int health, int attack, int defense, int level, int gold)
+        {
+            Name = name;
+            Health = health;
+            Attack = attack;
+            Defense = defense;
+            Level = level;
+            Gold = gold;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            Health -= damage;
+            if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
+            else Console.WriteLine($"{Name}이(가) {damage}의 데미지를 받았습니다. 남은 체력: {Health}");
+        }
+    }
+
+    public class Goblin : Monster
+    {
+        public Goblin(string name) : base(name, 50, 10, 5, 2, 1000) { }
+    }
+    public class Golom : Monster
+    {
+        public Golom(string name) : base(name, 50, 10, 11, 2, 1700) { }
+    }
+    public class Dragon : Monster
+    {
+        public Dragon(string name) : base(name, 100, 20, 17, 12, 2500) { }
+    }
+
+    public class Stage
+    {
+        private Monster monster;
+
+        public delegate void GameEvent(Monster character);
+        public event GameEvent OnCharacterDeath;
+        public Stage(Monster monster)
+        {
+            this.monster = monster;
+        }
+
+        public void Start(Player player)
+        {
+            Random random = new Random();
+            bool DungeonFail = false;
+            if (player.Defense + player.EquipDefense < monster.Defense)
+            {
+                int randomfail = random.Next(0, 100);
+                if (randomfail > 0)
+                {
+                    DungeonFail = true;
+                }
+
+                else DungeonFail = false;
+            }
+
+            Console.Clear();
+            Console.WriteLine($"스테이지 시작!");
+            Console.WriteLine($"플레이어 정보: 이름({player.Name}), 체력({player.Health}), 공격력({player.Attack}), 방어력({player.Defense + player.EquipDefense})");
+            Console.WriteLine($"몬스터 정보: 이름({monster.Name}), 체력({monster.Health}), 공격력({monster.Attack}, 방어력({monster.Defense})");
+            Console.WriteLine("----------------------------------------------------");
+            int playerHp = player.Health;
+            int playerGold = player.Gold;
+            int playerLv = player.Level;
+            
+
+            while (!player.IsDead && !monster.IsDead && DungeonFail == false) // 플레이어나 몬스터가 죽을 때까지 반복
+            {
+                // 플레이어의 턴
+                Console.WriteLine($"{player.Name}의 턴!");
+                monster.TakeDamage(player.Attack);
+                Console.WriteLine();
+                Thread.Sleep(1000);  // 턴 사이에 1초 대기
+
+                if (monster.IsDead)
+                {
+                    Console.ReadKey();
+                    break;  // 몬스터가 죽었다면 턴 종료
+                }
+                    
+
+                // 몬스터의 턴
+                Console.WriteLine($"{monster.Name}의 턴!");
+                player.TakeDamage(monster.Attack);
+                Console.WriteLine();
+                Thread.Sleep(1000);  // 턴 사이에 1초 대기
+            }
+
+            // 플레이어나 몬스터가 죽었을 때 이벤트 호출
+            if (DungeonFail)
+            {
+                DungeonFail = false;
+                Console.WriteLine("던전 실패! 패배했습니다...");
+                Console.WriteLine("[탐험 결과]\n");
+
+                Console.WriteLine($"체력 {playerHp} -> {player.Health / 2} ");
+                Console.WriteLine($"Gold {playerGold} -> {player.Gold} ");
+                Console.WriteLine("계속하려면 아무 키나 누르세요...");
+                Console.ReadKey();
+            }
+            else if (player.IsDead)
+            {
+                Console.Clear();
+                Console.WriteLine("던전 실패! 패배했습니다...");
+                Console.WriteLine("[탐험 결과]\n");
+
+                Console.WriteLine($"체력 {playerHp} -> {player.Health} ");
+                Console.WriteLine($"Gold {playerGold} -> {player.Gold} ");
+                Console.WriteLine("계속하려면 아무 키나 누르세요...");
+                Console.ReadKey();
+            }
+            else if (monster.IsDead)
+            {
+                Console.Clear();
+                Console.WriteLine("던전 클리어");
+                Console.WriteLine($"축하합니다 {monster.Name}를 물리쳤습니다!");
+                Console.WriteLine("[탐험 결과]\n");
+                player.Level += 1;
+                player.Gold += monster.Gold;
+
+                Console.WriteLine($"체력 {playerLv} -> {player.Level} ");
+                Console.WriteLine($"체력 {playerHp} -> {player.Health} ");
+                Console.WriteLine($"Gold {playerGold} -> {player.Gold} ");
+                
+                Console.WriteLine("계속하려면 아무 키나 누르세요...");
+                Console.ReadKey();
+            }
+        }
+    }
+
+
+
     public interface Item
     {
         public string Name { get; }
@@ -125,7 +272,6 @@
                     }
                     else //장비 장착
                     {
-
                         ItemList[select - 1].IsEquip = true;
                         if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack += ItemList[select - 1].State;
                         else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense += ItemList[select - 1].State;
@@ -280,9 +426,7 @@
                     {
                         Console.WriteLine("이미 구매한 아이템입니다. 계속하려면 아무 키나 누르세요...");
                         Console.ReadKey();
-                    }
-
-                    
+                    }    
                 }
                 else
                 {
@@ -292,8 +436,6 @@
             }
         }
     }
-
-
 
     public class MainStage(Player player, Shop shop, Inventory inventory)
     {
@@ -374,7 +516,6 @@
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
-
                 string input = Console.ReadLine();
                 if (input == "0") MainMenu();
                 else
@@ -442,12 +583,15 @@
                     Console.ReadKey();
                 }
             }
-
         }
         public void DungeonUI()
         {
             while (game)
             {
+                Goblin goblin = new Goblin("Goblin"); // 고블린 생성
+                Golom golom = new Golom("Golom");
+                Dragon dragon = new Dragon("Dragon"); // 드래곤 생성
+
                 Console.Clear();
                 Console.WriteLine("[던전]");
                 Console.WriteLine("던전의 난이도를 선택하세요");
@@ -466,10 +610,17 @@
                         MainMenu();
                         break;
                     case "1":
+                        // 스테이지 1
+                        Stage stage1 = new Stage(goblin);
+                        stage1.Start(player);
                         break;
                     case "2":
+                        Stage stage2 = new Stage(golom);
+                        stage2.Start(player);
                         break;
                     case "3":
+                        Stage stage3 = new Stage(dragon);
+                        stage3.Start(player);
                         break;
                     default:
                         Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
@@ -526,8 +677,7 @@
                     Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
                     Console.ReadKey();
                 }
-            }
-            
+            }  
         }
     }
     class Program
@@ -563,14 +713,12 @@
                     Console.ReadKey();
                 }
             }
-            
-            
 
             Player player = new Player(name, select);
             Shop shop = new Shop();
             shop.SettingShop();
             Inventory inventory = new Inventory();
-           
+
             MainStage mainStage = new MainStage(player, shop, inventory);
             mainStage.Start();
         }
