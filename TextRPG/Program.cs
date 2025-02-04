@@ -163,7 +163,7 @@
         public string Description { get; set; }
 
         public int Price;
-        public bool IsBey = false;
+        public bool IsBuy = false;
 
         public ShopItem(string name, int state, string itemType, string description, int price, bool isBey)
         {
@@ -172,7 +172,7 @@
             ItemType = itemType;
             Description = description;
             Price = price;
-            IsBey = isBey;
+            IsBuy = isBey;
         }
     }
 
@@ -192,10 +192,58 @@
             ShopItemList.Add(new ShopItem("낡은 검", 7, "공격력", "수련자용 갑옷이다.", 500, false));
             ShopItemList.Add(new ShopItem("청동 도끼", 10, "공격력", "수련자용 갑옷이다.", 500, false));
         }
-        
-        public void ShopManger()
-        {
 
+        public void ViewShopList()
+        {
+            for (int i = 0; i < ShopItemList.Count; i++)
+            {
+                Console.WriteLine($"{ShopItemList[i].Name} | {ShopItemList[i].ItemType} + {ShopItemList[i].State} | {ShopItemList[i].Description} | {ShopItemList[i].Price}");
+            }
+        }
+        
+        public void ShopManger(Player player)
+        {
+            bool game = true;
+            while (game)
+            {
+                Console.Clear();
+                Console.WriteLine("상점 - 아이템 판매");
+                Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
+                Console.WriteLine("[보유 골드]");
+                Console.WriteLine($"{player.Gold} G");
+                Console.WriteLine("[아이템 목록]");
+
+                for (int i = 0; i < ShopItemList.Count; i++)
+                {
+                    Console.Write($"- {i + 1} ");
+                    if (ShopItemList[i].IsBuy != true) Console.WriteLine($"{ShopItemList[i].Name} | {ShopItemList[i].ItemType} + {ShopItemList[i].State} | {ShopItemList[i].Description} | {ShopItemList[i].Price}");
+                    else Console.WriteLine($"{ShopItemList[i].Name} | {ShopItemList[i].ItemType} + {ShopItemList[i].State} | {ShopItemList[i].Description} | 구매완료");
+                }
+
+                Console.WriteLine("0. 나가기\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
+
+                int select = int.Parse(Console.ReadLine());
+                if (select == 0) game = false;
+                else if (select > 0 && ShopItemList[select - 1] != null &&
+                    ShopItemList[select - 1].IsBuy == false && player.Gold >= ShopItemList[select - 1].Price)
+                {
+                    ShopItemList[select - 1].IsBuy = true;
+                    player.Gold -= ShopItemList[select - 1].Price;
+                    
+                }
+                else if (player.Gold < ShopItemList[select - 1].Price)
+                {
+                    Console.WriteLine("돈이 부족합니다. 계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
+                }
+            }
         }
     }
 
@@ -291,8 +339,6 @@
                 Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
                 Console.WriteLine("[아이템 목록]\n");
                 inventory.ShowInven();
-                
-
                 Console.WriteLine("1. 장착 관리");
                 Console.WriteLine("0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
@@ -325,14 +371,15 @@
                 Console.WriteLine($"{player.Gold} G");
                 Console.WriteLine("[아이템 목록]");
 
-                Console.WriteLine("\n1. 아이템 구매\n");
-                Console.WriteLine("\n0. 나가기\n");
+                shop.ViewShopList();
+                Console.WriteLine("\n1. 아이템 구매");
+                Console.WriteLine("0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
                 string input = Console.ReadLine();
                 if (input == "0") MainMenu();
-                else if (input == "0") shop.ShopManger();
+                else if (input == "1") shop.ShopManger(player);
                 else
                 {
                     Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
@@ -365,6 +412,7 @@
             
             Player player = new Player(name, select);
             Shop shop = new Shop();
+            shop.SettingShop();
             MainStage mainStage = new MainStage(player, shop);
             mainStage.Start();
         }
