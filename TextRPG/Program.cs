@@ -1,6 +1,7 @@
 ﻿namespace TextRPG
 {
     using System.Diagnostics;
+    using System.Linq;
     using System.Numerics;
     using System.Reflection.Emit;
     using System.Xml.Linq;
@@ -57,13 +58,76 @@
         }
 
     }
+    public interface Item
+    {
+        public string Name { get; }
+        public int State { get; }
+        public string ItemType { get; }
+        public string Description { get; }
+    }
+    class Inventory
+    {
+        private List<Items> ItemList;
+
+        public Inventory()
+        {
+            ItemList = new List<Items>();
+        }
+
+        public void AddItems(Items items)
+        {
+            ItemList.Add(items);
+        }
+
+        public void ShowInven()
+        {
+            for (int i = 0; i < ItemList.Count; i++)
+            {
+                if (ItemList[i].IsEquip == true) Console.Write("[E] ");
+                Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
+            }
+        }
+        public void ItemEquipManger()
+        {
+            for (int i = 0; i < ItemList.Count; i++)
+            {
+                if (ItemList[i].IsEquip == true) Console.Write("[E] ");
+                Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
+            }
+            int select = int.Parse(Console.ReadLine());
+
+        }
+    }
+    class Items
+    {
+        public string Name { get; set; }
+        public int State { get; set; }
+        public string ItemType { get; set; }
+        public string Description { get; set; }
+        public bool IsEquip;
+
+        public Items(string name, string itemType, int state, string description, bool isEquip)
+        {
+            Name= name;
+            State = state;
+            ItemType = itemType;
+            Description = description;
+            IsEquip = isEquip;
+        }
+    }
+
 
 
     public class MainStage(Player player)
     {
         bool game = true;
+        Inventory inventory = new Inventory();
         public void Start()
         {
+            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", true);
+            Items items2 = new Items("초보자 천갑옷", "방어력", 5, "초보자에게 처음 지급되는 천갑옷", false);
+            inventory.AddItems(items1);
+            inventory.AddItems(items2);
             MainMenu();
         }
         public void MainMenu()
@@ -90,7 +154,7 @@
                         InventoryUI();
                         break;
                     case "3":
-                        //ShopUI();
+                        ShopUI();
                         break;
                     case "0":
                         game = false;
@@ -139,6 +203,8 @@
                 Console.WriteLine("인벤토리");
                 Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
                 Console.WriteLine("[아이템 목록]\n");
+                inventory.ShowInven();
+                
 
                 Console.WriteLine("1. 장착 관리");
                 Console.WriteLine("0. 나가기\n");
@@ -230,7 +296,7 @@
             string select = Console.ReadLine();
             
             Player player = new Player(name, select);
-            
+
             MainStage mainStage = new MainStage(player);
             mainStage.Start();
         }
