@@ -89,13 +89,39 @@
         }
         public void ItemEquipManger()
         {
-            for (int i = 0; i < ItemList.Count; i++)
+            bool game = true;
+            while (game)
             {
-                if (ItemList[i].IsEquip == true) Console.Write("[E] ");
-                Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
-            }
-            int select = int.Parse(Console.ReadLine());
+                Console.Clear();
+                Console.WriteLine("인벤토리 - 장착 관리");
+                Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+                Console.WriteLine("[아이템 목록]\n");
+                for (int i = 0; i < ItemList.Count; i++)
+                {
+                    Console.Write($"- {i + 1} ");
+                    if (ItemList[i].IsEquip == true) Console.Write("[E] ");
+                    Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
+                }
+                
 
+                Console.WriteLine("0. 나가기\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
+
+                int select = int.Parse(Console.ReadLine());
+
+                if (select == 0) game = false;
+                else if (select > 0 && ItemList[select - 1] != null)
+                {
+                    if (ItemList[select - 1].IsEquip == true) ItemList[select - 1].IsEquip = false;
+                    else ItemList[select - 1].IsEquip = true;
+                }
+                else 
+                {
+                    Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
+                }
+            }
         }
     }
     class Items
@@ -224,28 +250,7 @@
         }
         public void ItemManagerUI()
         {
-            while (game)
-            {
-                Console.Clear();
-                Console.WriteLine("인벤토리 - 장착 관리");
-                Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
-                Console.WriteLine("[아이템 목록]\n");
-
-
-                Console.WriteLine("0. 나가기\n");
-                Console.WriteLine("원하시는 행동을 입력해주세요.");
-                Console.Write(">> ");
-
-                string input = Console.ReadLine();
-
-                if (input == "0") InventoryUI();
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
-                    Console.ReadKey();
-                }
-            }
-
+            inventory.ItemEquipManger();
         }
 
         public void ShopUI()
