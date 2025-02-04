@@ -337,6 +337,7 @@
                         break;
                     case "4":
                         //던전 입장
+                        Dungeon();
                         break;
                     case "5":
                         // 휴식 하기
@@ -443,9 +444,39 @@
             }
 
         }
-        public void Dungen()
+        public void Dungeon()
         {
+            while (game)
+            {
+                Console.Clear();
+                Console.WriteLine("[던전]");
+                Console.WriteLine("던전의 난이도를 선택하세요");
+                Console.WriteLine("1. 쉬운 던전     | 방어력 5 이상 권장");
+                Console.WriteLine("2. 일반 던전     | 방어력 11 이상 권장");
+                Console.WriteLine("3. 어려운 던전   | 방어력 17 이상 권장");
+                Console.WriteLine("\n0. 나가기\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
 
+                string input = Console.ReadLine();
+
+                switch(input)
+                {
+                    case "0":
+                        MainMenu();
+                        break;
+                    case "1":
+                        break;
+                    case "2":
+                        break;
+                    case "3":
+                        break;
+                    default:
+                        Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                        break;
+                }
+            }
         }
         public void Rest()
         {
