@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Numerics;
     using System.Reflection.Emit;
+    using System.Runtime.CompilerServices;
     using System.Xml.Linq;
 
     public interface ICharacter
@@ -273,7 +274,9 @@
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
                 Console.WriteLine("1. 상태 보기");
                 Console.WriteLine("2. 인벤토리");
-                Console.WriteLine("3. 상점\n");
+                Console.WriteLine("3. 상점");
+                Console.WriteLine("4. 던전입장");
+                Console.WriteLine("5. 성당");
                 Console.WriteLine("0. 게임 종료\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
@@ -289,6 +292,13 @@
                         break;
                     case "3":
                         ShopUI();
+                        break;
+                    case "4":
+                        //던전 입장
+                        break;
+                    case "5":
+                        // 휴식 하기
+                        Rest();
                         break;
                     case "0":
                         game = false;
@@ -390,6 +400,61 @@
                 }
             }
 
+        }
+        public void Dungen()
+        {
+
+        }
+        public void Rest()
+        {
+            while (game)
+            {
+                Console.Clear();
+                Console.WriteLine("성당");
+                Console.WriteLine("500 G를 헌금하시면 채력을 회복할 수 있습니다");
+                Console.WriteLine($"현재 채력 : {player.Health}");
+                Console.WriteLine($"보유 골드 : {player.Gold}\n");
+                Console.WriteLine("1. 헌금하기");
+                Console.WriteLine("0. 나가기\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
+
+                string input = Console.ReadLine();
+                if (input == "0") MainMenu();
+                else if (input == "1")
+                {
+                    if (player.Health < 100 && player.Gold >= 500)
+                    {
+                        int healing = 100 - player.Health;
+                        player.Health += healing;
+                        player.Gold -= 500;
+                        Console.WriteLine($"{healing}만큼 회복이 완료 되었습니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
+                    else if (player.Health >= 100)
+                    {
+                        Console.WriteLine("체력이 너무 많아 회복이 불가능 합니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
+                    else if (player.Gold < 500)
+                    {
+                        Console.WriteLine("돈이 부족하여 회복이 불가능 합니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
+                    
+                }
+                else if (input == "2")
+                {
+                    player.Health -= 30;
+                    Console.WriteLine(player.Health);
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
+                }
+            }
+            
         }
     }
     class Program
