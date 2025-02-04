@@ -115,7 +115,7 @@
                 int select = int.Parse(Console.ReadLine());
 
                 if (select == 0) game = false;
-                else if (select > 0 && ItemList[select - 1] != null && select <= ItemList.Count)
+                else if (select > 0 && select <= ItemList.Count && ItemList[select - 1] != null )
                 {
                     if (ItemList[select - 1].IsEquip == true)//장비 해제
                     {
@@ -125,9 +125,41 @@
                     }
                     else //장비 장착
                     {
+<<<<<<< Updated upstream
                         ItemList[select - 1].IsEquip = true;
                         if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack += ItemList[select - 1].State;
                         else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense += ItemList[select - 1].State;
+=======
+                        if (ItemList[select - 1].ItemType == "공격력")// 선택한 아이템이 공격력이면
+                        {
+                            //공격력 아이템은 모두 false로 변경
+                            for (int i = 0; i < ItemList.Count; i++)
+                            {
+                                if (ItemList[i].ItemType == "공격력" && ItemList[i].IsEquip == true)
+                                {
+                                    ItemList[i].IsEquip = false;
+                                    player.EquipAttack -= ItemList[i].State;
+                                }
+                            }
+                            ItemList[select - 1].IsEquip = true;
+                            player.EquipAttack += ItemList[select - 1].State;
+                        }
+                        else if (ItemList[select - 1].ItemType == "방어력")// 선택한 아이템이 공격력이면
+                        {
+                            //공격력 아이템은 모두 false로 변경
+                            for (int i = 0; i < ItemList.Count; i++)
+                            {
+                                if (ItemList[i].ItemType == "방어력" && ItemList[i].IsEquip == true)
+                                {
+                                    ItemList[i].IsEquip = false;
+                                    player.EquipDefense -= ItemList[i].State;
+                                }
+                                    
+                            }
+                            ItemList[select - 1].IsEquip = true;
+                            player.EquipDefense += ItemList[select - 1].State;
+                        }
+>>>>>>> Stashed changes
                     }
                 }
                 else 
@@ -227,20 +259,31 @@
 
                 int select = int.Parse(Console.ReadLine());
                 if (select == 0) game = false;
-                else if (select > 0 && ShopItemList[select - 1] != null && select <= ShopItemList.Count &&
-                    ShopItemList[select - 1].IsBuy == false && player.Gold >= ShopItemList[select - 1].Price)
+                else if (select > 0 && select <= ShopItemList.Count && ShopItemList[select - 1] != null)
                 {
-                    ShopItemList[select - 1].IsBuy = true;
-                    player.Gold -= ShopItemList[select - 1].Price;
-                    Items items = new Items(ShopItemList[select - 1].Name, ShopItemList[select - 1].ItemType,
-                        ShopItemList[select - 1].State, ShopItemList[select - 1].Description, false);
-                    inventory.AddItems(items);
+                    if (ShopItemList[select - 1].IsBuy == false)
+                    {
+                        if (player.Gold >= ShopItemList[select - 1].Price)
+                        {
+                            ShopItemList[select - 1].IsBuy = true;
+                            player.Gold -= ShopItemList[select - 1].Price;
+                            Items items = new Items(ShopItemList[select - 1].Name, ShopItemList[select - 1].ItemType,
+                                ShopItemList[select - 1].State, ShopItemList[select - 1].Description, false);
+                            inventory.AddItems(items);
+                        }
+                        else if (player.Gold < ShopItemList[select - 1].Price)
+                        {
+                            Console.WriteLine("돈이 부족합니다. 계속하려면 아무 키나 누르세요...");
+                            Console.ReadKey();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("이미 구매한 아이템입니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
 
-                }
-                else if (player.Gold < ShopItemList[select - 1].Price)
-                {
-                    Console.WriteLine("돈이 부족합니다. 계속하려면 아무 키나 누르세요...");
-                    Console.ReadKey();
+                    
                 }
                 else
                 {
@@ -466,18 +509,33 @@
             Console.WriteLine("원하시는 이름을 설정 해주세요.");
             Console.Write("이름 : ");
             string name = Console.ReadLine();
-
+            string select;
             //저장 시스템 만들기
 
             //직업 선택창 만들기
-            Console.Clear();
-            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-            Console.WriteLine("원하시는 직업을 골라주세요.");
-            Console.WriteLine("1. 전사 ");
-            Console.WriteLine("2. 도적 ");
-            Console.Write(">> ");
-            string select = Console.ReadLine();
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+                Console.WriteLine("원하시는 직업을 골라주세요.");
+                Console.WriteLine("1. 전사 ");
+                Console.WriteLine("2. 도적 ");
+                Console.Write(">> ");
+                select = Console.ReadLine();
+
+                if (select == "1" || select == "2" || select == "전사" || select == "도적")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
+                }
+            }
             
+            
+
             Player player = new Player(name, select);
             Shop shop = new Shop();
             shop.SettingShop();
