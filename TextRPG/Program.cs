@@ -225,12 +225,12 @@
             ItemList = new List<Items>();
         }
 
-        public void AddItems(Items items)
+        public void AddItems(Items items) //인벤토리 리스트에 추가 기능
         {
             ItemList.Add(items);
         }
 
-        public void ShowInven()
+        public void ShowInven() // 인벤토리에 표시 
         {
             for (int i = 0; i < ItemList.Count; i++)
             {
@@ -238,7 +238,7 @@
                 Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
             }
         }
-        public void ItemEquipManger(Player player)
+        public void ItemEquipManger(Player player) // 아이템 장착 관리
         {
             bool game = true;
             while (game)
@@ -250,7 +250,7 @@
                 for (int i = 0; i < ItemList.Count; i++)
                 {
                     Console.Write($"- {i + 1} ");
-                    if (ItemList[i].IsEquip == true) Console.Write("[E] ");
+                    if (ItemList[i].IsEquip == true) Console.Write("[E] "); //현재 장착된 아이템은 [E] 표시
                     Console.WriteLine($"{ItemList[i].Name} | {ItemList[i].ItemType} + {ItemList[i].State} | {ItemList[i].Description}");
                 }
                 
