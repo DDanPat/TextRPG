@@ -125,11 +125,11 @@
                     }
                     else //장비 장착
                     {
-<<<<<<< Updated upstream
+
                         ItemList[select - 1].IsEquip = true;
                         if (ItemList[select - 1].ItemType == "공격력") player.EquipAttack += ItemList[select - 1].State;
                         else if (ItemList[select - 1].ItemType == "방어력") player.EquipDefense += ItemList[select - 1].State;
-=======
+
                         if (ItemList[select - 1].ItemType == "공격력")// 선택한 아이템이 공격력이면
                         {
                             //공격력 아이템은 모두 false로 변경
@@ -159,7 +159,6 @@
                             ItemList[select - 1].IsEquip = true;
                             player.EquipDefense += ItemList[select - 1].State;
                         }
->>>>>>> Stashed changes
                     }
                 }
                 else 
