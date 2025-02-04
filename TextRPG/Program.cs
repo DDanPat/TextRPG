@@ -68,7 +68,7 @@
         public string ItemType { get; }
         public string Description { get; }
     }
-    class Inventory
+    public class Inventory
     {
         private List<Items> ItemList;
 
@@ -114,7 +114,7 @@
                 int select = int.Parse(Console.ReadLine());
 
                 if (select == 0) game = false;
-                else if (select > 0 && ItemList[select - 1] != null)
+                else if (select > 0 && ItemList[select - 1] != null && select <= ItemList.Count)
                 {
                     if (ItemList[select - 1].IsEquip == true)//장비 해제
                     {
@@ -137,7 +137,7 @@
             }
         }
     }
-    class Items
+    public class Items
     {
         public string Name { get; set; }
         public int State { get; set; }
@@ -201,7 +201,7 @@
             }
         }
         
-        public void ShopManger(Player player)
+        public void ShopManger(Player player, Inventory inventory)
         {
             bool game = true;
             while (game)
@@ -226,12 +226,15 @@
 
                 int select = int.Parse(Console.ReadLine());
                 if (select == 0) game = false;
-                else if (select > 0 && ShopItemList[select - 1] != null &&
+                else if (select > 0 && ShopItemList[select - 1] != null && select <= ShopItemList.Count &&
                     ShopItemList[select - 1].IsBuy == false && player.Gold >= ShopItemList[select - 1].Price)
                 {
                     ShopItemList[select - 1].IsBuy = true;
                     player.Gold -= ShopItemList[select - 1].Price;
-                    
+                    Items items = new Items(ShopItemList[select - 1].Name, ShopItemList[select - 1].ItemType,
+                        ShopItemList[select - 1].State, ShopItemList[select - 1].Description, false);
+                    inventory.AddItems(items);
+
                 }
                 else if (player.Gold < ShopItemList[select - 1].Price)
                 {
@@ -249,10 +252,10 @@
 
 
 
-    public class MainStage(Player player, Shop shop)
+    public class MainStage(Player player, Shop shop, Inventory inventory)
     {
         bool game = true;
-        Inventory inventory = new Inventory();
+        
         public void Start()
         {
             Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", false);
@@ -306,12 +309,12 @@
                 Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
                 Console.WriteLine($"Lv. {player.Level}");
                 Console.WriteLine($"{player.Name} ( {player.ClassName} )");
-                Console.Write($"공격력 : {player.AttackPower}"); Console.WriteLine($"({player.EquipAttack})");
-                //if (player.EquipAttack > 0) Console.WriteLine($"({player.EquipAttack})");
-                //else Console.WriteLine("");
-                Console.Write($"방어력 : {player.Defense}"); Console.WriteLine($"({player.EquipDefense})");
-                //if (player.EquipDefense > 0) Console.WriteLine($"({player.EquipDefense})");
-                //else Console.WriteLine("");
+                Console.Write($"공격력 : {player.AttackPower}");
+                if (player.EquipAttack > 0) Console.WriteLine($"({player.EquipAttack})");
+                else Console.WriteLine("");
+                Console.Write($"방어력 : {player.Defense}");
+                if (player.EquipDefense > 0) Console.WriteLine($"({player.EquipDefense})");
+                else Console.WriteLine("");
                 Console.WriteLine($"체 력 : {player.Health}");
                 Console.WriteLine($"Gold : {player.Gold} G");
                 Console.WriteLine("\n0. 나가기\n");
@@ -379,7 +382,7 @@
 
                 string input = Console.ReadLine();
                 if (input == "0") MainMenu();
-                else if (input == "1") shop.ShopManger(player);
+                else if (input == "1") shop.ShopManger(player, inventory);
                 else
                 {
                     Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
@@ -413,7 +416,9 @@
             Player player = new Player(name, select);
             Shop shop = new Shop();
             shop.SettingShop();
-            MainStage mainStage = new MainStage(player, shop);
+            Inventory inventory = new Inventory();
+           
+            MainStage mainStage = new MainStage(player, shop, inventory);
             mainStage.Start();
         }
     }
