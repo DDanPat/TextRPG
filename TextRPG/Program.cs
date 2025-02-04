@@ -155,9 +155,53 @@
         }
     }
 
+    public class ShopItem : Item
+    {
+        public string Name { get; set; }
+        public int State { get; set; }
+        public string ItemType { get; set; }
+        public string Description { get; set; }
+
+        public int Price;
+        public bool IsBey = false;
+
+        public ShopItem(string name, int state, string itemType, string description, int price, bool isBey)
+        {
+            Name = name;
+            State = state;
+            ItemType = itemType;
+            Description = description;
+            Price = price;
+            IsBey = isBey;
+        }
+    }
+
+    public class Shop
+    {
+        private List<ShopItem> ShopItemList;
+
+        public Shop()
+        {
+            ShopItemList = new List<ShopItem>();
+        }
+
+        public void SettingShop()
+        {
+            ShopItemList.Add(new ShopItem("수련자 갑옷", 7, "방어력", "수련자용 갑옷이다.", 500, false));
+            ShopItemList.Add(new ShopItem("무쇠갑옷", 10, "방어력", "무쇠로 만들어져 튼튼한 갑옷이다.", 500, false));
+            ShopItemList.Add(new ShopItem("낡은 검", 7, "공격력", "수련자용 갑옷이다.", 500, false));
+            ShopItemList.Add(new ShopItem("청동 도끼", 10, "공격력", "수련자용 갑옷이다.", 500, false));
+        }
+        
+        public void ShopManger()
+        {
+
+        }
+    }
 
 
-    public class MainStage(Player player)
+
+    public class MainStage(Player player, Shop shop)
     {
         bool game = true;
         Inventory inventory = new Inventory();
@@ -281,12 +325,14 @@
                 Console.WriteLine($"{player.Gold} G");
                 Console.WriteLine("[아이템 목록]");
 
+                Console.WriteLine("\n1. 아이템 구매\n");
                 Console.WriteLine("\n0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
                 string input = Console.ReadLine();
                 if (input == "0") MainMenu();
+                else if (input == "0") shop.ShopManger();
                 else
                 {
                     Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
@@ -318,8 +364,8 @@
             string select = Console.ReadLine();
             
             Player player = new Player(name, select);
-
-            MainStage mainStage = new MainStage(player);
+            Shop shop = new Shop();
+            MainStage mainStage = new MainStage(player, shop);
             mainStage.Start();
         }
     }
