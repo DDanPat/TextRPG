@@ -30,7 +30,7 @@
         public int Attack => new Random().Next(10, AttackPower); // 공격력은 랜덤
 
         public int Level = 1;
-        public int Gold = 1500;
+        public int Gold = 999999;
 
         public int EquipAttack = 0;
         public int EquipDefense = 0;
@@ -124,7 +124,7 @@
             bool DungeonFail = false;
             if (player.Defense + player.EquipDefense < monster.Defense)
             {
-                int randomfail = random.Next(0, 100);
+                int randomfail = random.Next(0, 40);
                 if (randomfail > 0)
                 {
                     DungeonFail = true;
@@ -135,8 +135,8 @@
 
             Console.Clear();
             Console.WriteLine($"스테이지 시작!");
-            Console.WriteLine($"플레이어 정보: 이름({player.Name}), 체력({player.Health}), 공격력({player.Attack}), 방어력({player.Defense + player.EquipDefense})");
-            Console.WriteLine($"몬스터 정보: 이름({monster.Name}), 체력({monster.Health}), 공격력({monster.Attack}, 방어력({monster.Defense})");
+            Console.WriteLine($"플레이어 정보: 이름({player.Name}), 체력({player.Health}), 공격력({player.Attack + player.EquipAttack}), 방어력({player.Defense + player.EquipDefense})");
+            Console.WriteLine($"몬스터 정보: 이름({monster.Name}), 체력({monster.Health}), 공격력({monster.Attack}), 방어력({monster.Defense})");
             Console.WriteLine("----------------------------------------------------");
             int playerHp = player.Health;
             int playerGold = player.Gold;
@@ -147,12 +147,13 @@
             {
                 // 플레이어의 턴
                 Console.WriteLine($"{player.Name}의 턴!");
-                monster.TakeDamage(player.Attack);
+                monster.TakeDamage(player.Attack + player.EquipAttack);
                 Console.WriteLine();
                 Thread.Sleep(1000);  // 턴 사이에 1초 대기
 
                 if (monster.IsDead)
                 {
+                    Console.WriteLine("계속하려면 아무 키나 누르세요...");
                     Console.ReadKey();
                     break;  // 몬스터가 죽었다면 턴 종료
                 }
@@ -508,8 +509,8 @@
         
         public void Start()
         {
-            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", false, 100);
-            Items items2 = new Items("초보자 천갑옷", "방어력", 5, "초보자에게 처음 지급되는 천갑옷", false, 100);
+            Items items1 = new Items("+99 나무몽둥이", "공격력", 999, "초보자에게 지급되는 기본 몽둥이 하지만 어디선가 본듯하다.", false, 100);
+            Items items2 = new Items("허름한 망토", "방어력", 999, "초보자에게 처음 지급되는 허름한 망토 하지만 어디선가 본듯하다", false, 100);
             inventory.AddItems(items1);
             inventory.AddItems(items2);
             MainMenu();
