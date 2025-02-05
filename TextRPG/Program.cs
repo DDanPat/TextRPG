@@ -215,6 +215,7 @@
         public int State { get; }
         public string ItemType { get; }
         public string Description { get; }
+        public int Price { get; }
     }
     public class Inventory
     {
@@ -223,6 +224,14 @@
         public Inventory()
         {
             ItemList = new List<Items>();
+        }
+        public List<Items> GetItems()
+        {
+            return ItemList;
+        }
+        public void RemoveItem(Items item)
+        {
+            ItemList.Remove(item);
         }
 
         public void AddItems(Items items) //인벤토리 리스트에 추가 기능
@@ -321,15 +330,17 @@
         public int State { get; set; }
         public string ItemType { get; set; }
         public string Description { get; set; }
+        public int Price { get; set; }
         public bool IsEquip;
 
-        public Items(string name, string itemType, int state, string description, bool isEquip)
+        public Items(string name, string itemType, int state, string description, bool isEquip, int price)
         {
             Name= name;
             State = state;
             ItemType = itemType;
             Description = description;
             IsEquip = isEquip;
+            Price = price;
         }
     }
 
@@ -339,8 +350,7 @@
         public int State { get; set; }
         public string ItemType { get; set; }
         public string Description { get; set; }
-
-        public int Price;
+        public int Price { get; set; }
         public bool IsBuy = false;
 
         public ShopItem(string name, int state, string itemType, string description, int price, bool isBey)
@@ -366,9 +376,11 @@
         public void SettingShop()
         {
             ShopItemList.Add(new ShopItem("수련자 갑옷", 7, "방어력", "수련자용 갑옷이다.", 500, false));
-            ShopItemList.Add(new ShopItem("무쇠갑옷", 10, "방어력", "무쇠로 만들어져 튼튼한 갑옷이다.", 500, false));
+            ShopItemList.Add(new ShopItem("무쇠갑옷", 10, "방어력", "무쇠로 만들어져 튼튼한 갑옷이다.",750, false));
             ShopItemList.Add(new ShopItem("낡은 검", 7, "공격력", "수련자용 갑옷이다.", 500, false));
-            ShopItemList.Add(new ShopItem("청동 도끼", 10, "공격력", "수련자용 갑옷이다.", 500, false));
+            ShopItemList.Add(new ShopItem("청동 도끼", 10, "공격력", "수련자용 갑옷이다.", 750, false));
+            ShopItemList.Add(new ShopItem("기사단의 보검 -일곱개의 진실- ", 900, "공격력", "초대기사단장이 사용하던 검. 선택받은자만 사용 가능하다", 8500, false));
+            ShopItemList.Add(new ShopItem("황룡의 금빛 플레이트 갑옷", 880, "방어력", "초대기사단장이 사용하던 갑옷. 특별한 능력이 있는 것 같다.", 7500, false));
         }
 
         public void ViewShopList()
@@ -412,8 +424,9 @@
                         {
                             ShopItemList[select - 1].IsBuy = true;
                             player.Gold -= ShopItemList[select - 1].Price;
+                            float sellPrice = (ShopItemList[select - 1].Price * 0.85f);
                             Items items = new Items(ShopItemList[select - 1].Name, ShopItemList[select - 1].ItemType,
-                                ShopItemList[select - 1].State, ShopItemList[select - 1].Description, false);
+                                ShopItemList[select - 1].State, ShopItemList[select - 1].Description, false, Convert.ToInt32(sellPrice));
                             inventory.AddItems(items);
                         }
                         else if (player.Gold < ShopItemList[select - 1].Price)
@@ -435,6 +448,58 @@
                 }
             }
         }
+
+        public void ShopSellManager(Player player, Inventory inventory)
+        {
+            bool game = true;
+            while (game)
+            {
+                Console.Clear();
+                Console.WriteLine("상점 - 아이템 판매");
+                Console.WriteLine("보유한 아이템을 판매할 수 있습니다.\n");
+                Console.WriteLine("[보유 골드]");
+                Console.WriteLine($"{player.Gold} G");
+                Console.WriteLine("[판매 가능한 아이템 목록]\n");
+
+                List<Items> sellableItems = inventory.GetItems(); // 인벤토리에서 모든 아이템 가져오기
+
+                for (int i = 0; i < sellableItems.Count; i++)
+                {
+                    Console.WriteLine($"- {i + 1} {sellableItems[i].Name} | {sellableItems[i].ItemType} +{sellableItems[i].State} | {sellableItems[i].Description} | 판매가: {sellableItems[i].Price} G");
+                }
+
+                Console.WriteLine("0. 나가기\n");
+                Console.Write("판매할 아이템 번호를 입력하세요: ");
+
+                int select;
+                if (int.TryParse(Console.ReadLine(), out select))
+                {
+                    if (select == 0)
+                    {
+                        game = false;
+                    }
+                    else if (select > 0 && select <= sellableItems.Count)
+                    {
+                        Items selectedItem = sellableItems[select - 1];
+
+                        // 플레이어 골드 증가
+                        player.Gold += selectedItem.Price;
+
+                        // 인벤토리에서 아이템 제거
+                        inventory.RemoveItem(selectedItem);
+
+                        Console.WriteLine($"{selectedItem.Name}을(를) {selectedItem.Price}G에 판매했습니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
+                        Console.ReadKey();
+                    }
+                }
+            }
+        }
+
     }
 
     public class MainStage(Player player, Shop shop, Inventory inventory)
@@ -443,8 +508,8 @@
         
         public void Start()
         {
-            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", false);
-            Items items2 = new Items("초보자 천갑옷", "방어력", 5, "초보자에게 처음 지급되는 천갑옷", false);
+            Items items1 = new Items("초보자 나무 목검", "공격력", 5, "초보자도 쉽게 다룰수 있는 나무 목검", false, 100);
+            Items items2 = new Items("초보자 천갑옷", "방어력", 5, "초보자에게 처음 지급되는 천갑옷", false, 100);
             inventory.AddItems(items1);
             inventory.AddItems(items2);
             MainMenu();
@@ -570,6 +635,7 @@
 
                 shop.ViewShopList();
                 Console.WriteLine("\n1. 아이템 구매");
+                Console.WriteLine("2. 아이템 판매");
                 Console.WriteLine("0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
@@ -577,6 +643,7 @@
                 string input = Console.ReadLine();
                 if (input == "0") MainMenu();
                 else if (input == "1") shop.ShopManger(player, inventory);
+                else if (input == "2") shop.ShopSellManager(player, inventory);
                 else
                 {
                     Console.WriteLine("잘못된 입력입니다. 계속하려면 아무 키나 누르세요...");
