@@ -57,9 +57,9 @@
 
         public void TakeDamage(int damage)
         {
-            float playerDef = Defense + EquipDefense;
-            float ReductionDamage = playerDef / (playerDef + 100);
-            int takeDamage = Convert.ToInt32(damage - (damage * ReductionDamage));
+            float playerDef = Defense + EquipDefense; // 플레이어 방어력 = 기본 방어력 + 아이템 방어력
+            float ReductionDamage = playerDef / (playerDef + 100); // 감소된 피해량 = 플레이어 방어력 /( 플레이어 방어력 + 100)
+            int takeDamage = Convert.ToInt32(damage - (damage * ReductionDamage)); // 받은 피해량 = 몬스터 공격력 - (몬스터 공격력 * 감소된 피해량)
             Health -= takeDamage;
             if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
             else Console.WriteLine($"{Name}이(가) {takeDamage}의 데미지를 받았습니다. 남은 체력: {Health}");
@@ -229,11 +229,11 @@
         {
             ItemList = new List<Items>();
         }
-        public List<Items> GetItems()
+        public List<Items> GetItems() // 인벤토리 아이템 상점에 아이탬 판매 리스트에 전달
         {
             return ItemList;
         }
-        public void RemoveItem(Items item)
+        public void RemoveItem(Items item) //인벤토리 아이템 판매시 삭제
         {
             ItemList.Remove(item);
         }
@@ -274,6 +274,8 @@
 
                 int select = int.Parse(Console.ReadLine());
 
+                // 아이템 장착 기능인데 중복된 코드가 있는것 같지만 최적화하다가 
+                //작동이 안될까봐 두려워 건들지 못하겠습니다
                 if (select == 0) game = false;
                 else if (select > 0 && select <= ItemList.Count && ItemList[select - 1] != null )
                 {
@@ -300,12 +302,12 @@
                                     player.EquipAttack -= ItemList[i].State;
                                 }
                             }
-                            ItemList[select - 1].IsEquip = true;
+                            ItemList[select - 1].IsEquip = true; //선택한 아이템 장착
                             player.EquipAttack += ItemList[select - 1].State;
                         }
                         else if (ItemList[select - 1].ItemType == "방어력")// 선택한 아이템이 공격력이면
                         {
-                            //공격력 아이템은 모두 false로 변경
+                            //방어력 아이템은 모두 false로 변경
                             for (int i = 0; i < ItemList.Count; i++)
                             {
                                 if (ItemList[i].ItemType == "방어력" && ItemList[i].IsEquip == true)
@@ -315,7 +317,7 @@
                                 }
                                     
                             }
-                            ItemList[select - 1].IsEquip = true;
+                            ItemList[select - 1].IsEquip = true; //선택한 아이템 장착
                             player.EquipDefense += ItemList[select - 1].State;
                         }
                     }
@@ -377,7 +379,7 @@
             ShopItemList = new List<ShopItem>();
         }
 
-        public void SettingShop()
+        public void SettingShop() // 상점 아이템 기본 세팅
         {
             ShopItemList.Add(new ShopItem("수련자 갑옷", 7, "방어력", "수련자용 갑옷이다.", 500, false));
             ShopItemList.Add(new ShopItem("무쇠갑옷", 10, "방어력", "무쇠로 만들어져 튼튼한 갑옷이다.",750, false));
@@ -395,7 +397,7 @@
             }
         }
         
-        public void ShopManger(Player player, Inventory inventory)
+        public void ShopManger(Player player, Inventory inventory) // 상점 아이템 구매 기능
         {
             bool game = true;
             while (game)
@@ -453,7 +455,7 @@
             }
         }
 
-        public void ShopSellManager(Player player, Inventory inventory)
+        public void ShopSellManager(Player player, Inventory inventory) //플레이어 아이탬 판매 기능
         {
             bool game = true;
             while (game)
@@ -520,7 +522,7 @@
         }
         public void MainMenu()
         {
-            while (game)
+            while (game) //메인 메뉴
             {
                 Console.Clear();
                 Console.WriteLine("에데온 마을에 오신 여러분 환영합니다.");
@@ -564,7 +566,7 @@
                 }
             }
         }
-        public void StateUI()
+        public void StateUI() //플레이어 스텟
         {
             while (game)
             {
@@ -596,7 +598,7 @@
 
         }
 
-        public void InventoryUI()
+        public void InventoryUI()// 인벤토리
         {
             while (game)
             {
@@ -626,7 +628,7 @@
             inventory.ItemEquipManger(player);
         }
 
-        public void ShopUI()
+        public void ShopUI()//상점
         {
             while (game)
             {
@@ -655,7 +657,7 @@
                 }
             }
         }
-        public void DungeonUI()
+        public void DungeonUI()//던전
         {
             while (game)
             {
@@ -700,7 +702,7 @@
                 }
             }
         }
-        public void Rest()
+        public void Rest()// 휴식하기
         {
             while (game)
             {
@@ -755,13 +757,12 @@
     {
         static void Main(string[] args)
         {
-            
+            //게임 시작 인트로
             Console.WriteLine("무한의 던전에 오신 여러분 환영합니다.");
             Console.WriteLine("원하시는 이름을 설정 해주세요.");
             Console.Write("이름 : ");
             string name = Console.ReadLine();
             string select;
-            //저장 시스템 만들기
 
             //직업 선택창 만들기
             while (true)
