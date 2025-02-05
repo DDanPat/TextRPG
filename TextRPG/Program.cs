@@ -24,10 +24,10 @@
         public string Name { get; set; }
         public string ClassName { get; set; }
         public int Health { get; set; }
-        public int AttackPower { get; set; }
+        public int Attack { get; set; }
         public int Defense { get; set; }
         public bool IsDead => Health <= 0;
-        public int Attack => new Random().Next(10, AttackPower); // 공격력은 랜덤
+        
 
         public int Level = 1;
         public int Gold = 999999;
@@ -43,14 +43,14 @@
             {
                 ClassName = "전사";
                 Health = 120;
-                AttackPower = 20;
+                Attack = 20;
                 Defense = 10;
             }
             else if (Select == "2" || Select == "도적")
             {
                 ClassName = "도적";
                 Health = 100;
-                AttackPower = 30;
+                Attack = 30;
                 Defense = 5;
             }
         }
@@ -58,10 +58,11 @@
         public void TakeDamage(int damage)
         {
             float playerDef = Defense + EquipDefense;
-            float takeDamage = (damage / playerDef) * 100;
-            Health -= damage;
+            float ReductionDamage = playerDef / (playerDef + 100);
+            int takeDamage = Convert.ToInt32(damage - (damage * ReductionDamage));
+            Health -= takeDamage;
             if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
-            else Console.WriteLine($"{Name}이(가) {damage}의 데미지를 받았습니다. 남은 체력: {Health}");
+            else Console.WriteLine($"{Name}이(가) {takeDamage}의 데미지를 받았습니다. 남은 체력: {Health}");
         }
     }
 
@@ -88,9 +89,11 @@
 
         public void TakeDamage(int damage)
         {
-            Health -= damage;
+            float ReductionDamage = Defense / (Defense + 100);
+            int takeDamage = Convert.ToInt32(damage - (damage * ReductionDamage));
+            Health -= takeDamage;
             if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
-            else Console.WriteLine($"{Name}이(가) {damage}의 데미지를 받았습니다. 남은 체력: {Health}");
+            else Console.WriteLine($"{Name}이(가) {takeDamage}의 데미지를 받았습니다. 남은 체력: {Health}");
         }
     }
 
@@ -570,7 +573,7 @@
                 Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
                 Console.WriteLine($"Lv. {player.Level}");
                 Console.WriteLine($"{player.Name} ( {player.ClassName} )");
-                Console.Write($"공격력 : {player.AttackPower}");
+                Console.Write($"공격력 : {player.Attack}");
                 if (player.EquipAttack > 0) Console.WriteLine($"({player.EquipAttack})");
                 else Console.WriteLine("");
                 Console.Write($"방어력 : {player.Defense}");
