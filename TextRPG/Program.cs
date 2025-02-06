@@ -150,7 +150,30 @@
             {
                 // 플레이어의 턴
                 Console.WriteLine($"{player.Name}의 턴!");
-                monster.TakeDamage(player.Attack + player.EquipAttack);
+                //행동 선택
+                Console.Clear();
+                Console.WriteLine($"플레이어 정보: 이름({player.Name}), 체력({player.Health}), 공격력({player.Attack + player.EquipAttack}), 방어력({player.Defense + player.EquipDefense})");
+                Console.WriteLine($"몬스터 정보: 이름({monster.Name}), 체력({monster.Health}), 공격력({monster.Attack}), 방어력({monster.Defense})");
+                Console.WriteLine("----------------------------------------------------");
+                Console.WriteLine("[행동 선택]\n");
+                Console.WriteLine("1. 공격");
+                Console.WriteLine("2. 포션");
+
+                Console.WriteLine("\n원하는 행동을 선택 해주세요");
+                Console.Write(">> ");
+                string select = Console.ReadLine();
+
+                if (select == "1")
+                {
+                    monster.TakeDamage(player.Attack + player.EquipAttack);
+                }
+                else if (select == "2")
+                {
+                    Console.WriteLine("회복");
+                    player.Health += 20;
+                    Console.WriteLine("체력 20만큼 회복 하였습니다.");
+                }
+                
                 Console.WriteLine();
                 Thread.Sleep(1000);  // 턴 사이에 1초 대기
 
@@ -167,6 +190,9 @@
                 player.TakeDamage(monster.Attack);
                 Console.WriteLine();
                 Thread.Sleep(1000);  // 턴 사이에 1초 대기
+
+                Console.WriteLine("계속하려면 아무 키나 누르세요...");
+                Console.ReadKey();
             }
 
             // 플레이어나 몬스터가 죽었을 때 이벤트 호출
@@ -712,6 +738,7 @@
                 Console.WriteLine($"현재 채력 : {player.Health}");
                 Console.WriteLine($"보유 골드 : {player.Gold}\n");
                 Console.WriteLine("1. 헌금하기");
+                Console.WriteLine("2. 기도하기 -신체 강화-");
                 Console.WriteLine("0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
@@ -743,7 +770,11 @@
                 else if (input == "2")
                 {
                     player.Health -= 30;
-                    Console.WriteLine(player.Health);
+                    player.EquipAttack += 100;
+                    player.EquipDefense += 100;
+                    Console.WriteLine($"체력 30 만큼 대가를 바치고 신체 강화를 하였습니다.");
+                    Console.WriteLine("계속하려면 아무 키나 누르세요...");
+                    Console.ReadKey();
                 }
                 else
                 {
